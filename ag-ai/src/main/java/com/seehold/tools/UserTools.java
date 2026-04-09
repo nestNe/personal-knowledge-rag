@@ -26,7 +26,7 @@ public class UserTools {
     private final RolePermissionMapper rolePermissionMapper;
 
 
-    @Tool(description = "根据查询条件查询用户列表")
+    @Tool(description = "根据查询条件查询用户列表::管理员及超级管理员")
     public List<User> userQuery(@ToolParam(description = "用户查询的条件") UserQuery query) {
         if (query == null) {
             return List.of();
@@ -42,7 +42,7 @@ public class UserTools {
         return userMapper.selectList(qw);
     }
 
-    @Tool(description = "根据用户ID查询用户所属角色")
+    @Tool(description = "根据用户ID查询用户所属角色::管理员及超级管理员")
     public Role userRoles(@ToolParam(description = "用户ID") Long userId) {
         if (userId == null) {
             return null;
@@ -55,7 +55,7 @@ public class UserTools {
         return roleMapper.selectById(userRole.getRoleId());
     }
 
-    @Tool(description = "根据角色查询该角色对应的权限有哪些")
+    @Tool(description = "根据角色查询该角色对应的权限有哪些::所有角色")
     public List<Permission> rolePermissions(@ToolParam(description = "角色ID") Long roleId) {
         if (roleId == null) {
             return List.of();
@@ -75,6 +75,16 @@ public class UserTools {
                 .toList();
 
         return permissionMapper.selectBatchIds(ids);
+    }
+
+    @Tool(description = "查询当前用户的角色::所有角色")
+    public Role currentUserRole(@ToolParam(description = "用户ID") Long userId) {
+        QueryWrapper<UserRole> qw = new QueryWrapper<>();
+        qw.eq("user_id", userId);
+        UserRole userRole = userRoleMapper.selectOne(qw);
+        if (userRole == null || userRole.getRoleId() == null)
+            return null;
+        return roleMapper.selectById(userRole.getRoleId());
     }
 
 
