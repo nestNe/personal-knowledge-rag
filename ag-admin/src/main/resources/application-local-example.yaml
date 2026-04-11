@@ -19,3 +19,10 @@ spring:
         options:
           model: your_model
           temperature: 1
+    vectorstore:
+      pgvector:
+        index-type: hnsw
+        distance-type: cosine_distance
+        dimensions: 1536
+        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+        table-name:

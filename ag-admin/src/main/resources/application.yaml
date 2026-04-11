@@ -43,6 +43,7 @@ logging:
   level:
     com.seehold.mapper: debug
 
+# 系统配置
 seehold:
   default:
     role-name: user
