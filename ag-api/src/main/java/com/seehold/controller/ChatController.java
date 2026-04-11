@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import com.seehold.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -20,6 +22,7 @@ import reactor.core.publisher.Flux;
 public class ChatController {
 
     private final ChatClient userManageClient;
+    private final EmbeddingModel embeddingModel;
 
     /**
      * 对话
