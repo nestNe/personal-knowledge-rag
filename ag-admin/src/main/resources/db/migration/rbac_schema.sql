@@ -179,7 +179,8 @@ VALUES ('user:list', '用户列表', 'user'),
        ('perm:update', '更新权限', 'perm'),
        ('perm:delete', '删除权限', 'perm'),
        ('perm:view', '查看权限', 'perm'),
-       ('agent:chat', 'AI对话', 'agent');
+       ('agent:chat', 'AI对话', 'agent'),
+       ('agent:embedding', '添加向量', 'agent');
 
 -- super_admin 角色权限（所有权限）
 INSERT INTO role_permissions (role_id, permission_id)
