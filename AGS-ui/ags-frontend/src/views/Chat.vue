@@ -6,7 +6,7 @@
         <div class="message" v-for="(msg, index) in messages" :key="index" :class="msg.role">
           <div class="message-content">
             <div class="message-header">
-              <span class="message-role">{{ msg.role === 'user' ? '我' : 'AI' }}</span>
+              <span class="message-role">{{ msg.role === 'user' ? '我' : '阿古' }}</span>
               <span class="message-time">{{ msg.time }}</span>
             </div>
             <div class="message-body" v-html="msg.content"></div>
@@ -15,7 +15,7 @@
         <div v-if="loading" class="message ai">
           <div class="message-content">
             <div class="message-header">
-              <span class="message-role">AI</span>
+              <span class="message-role">阿古</span>
               <span class="message-time">{{ new Date().toLocaleTimeString() }}</span>
             </div>
             <div class="message-body loading">
@@ -29,15 +29,24 @@
         </div>
       </div>
       <div class="chat-input">
-        <textarea
-          v-model="inputMessage"
-          placeholder="请输入您的问题..."
-          @keyup.enter.exact="sendMessage"
-          @keyup.enter.shift="inputMessage += '\n'"
-        ></textarea>
-        <button class="send-btn" @click="sendMessage" :disabled="loading || !inputMessage.trim()">
-          发送
-        </button>
+        <div class="model-selector">
+          <label for="chat-model">回答模式</label>
+          <select id="chat-model" v-model="selectedMode">
+            <option value="normal">普通聊天模型</option>
+            <option value="kb">知识库检索模型</option>
+          </select>
+        </div>
+        <div class="input-row">
+          <textarea
+            v-model="inputMessage"
+            placeholder="请输入您的问题..."
+            @keyup.enter.exact="sendMessage"
+            @keyup.enter.shift="inputMessage += '\n'"
+          ></textarea>
+          <button class="send-btn" @click="sendMessage" :disabled="loading || !inputMessage.trim()">
+            发送
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -51,13 +60,14 @@ import { marked } from 'marked'
 const messages = ref([
   {
     role: 'ai',
-    content: '你好！我是AI助手，有什么我可以帮助你的吗？',
+    content: '你好！我是阿古，有什么我可以帮助你的吗？',
     time: new Date().toLocaleTimeString()
   }
 ])
 const inputMessage = ref('')
 const loading = ref(false)
 const messagesContainer = ref(null)
+const selectedMode = ref('normal')
 
 // 发送消息
 const sendMessage = async () => {
@@ -80,7 +90,9 @@ const sendMessage = async () => {
   
   try {
     // 调用API
-    const response = await chatApi.sendMessage(content)
+    const response = selectedMode.value === 'kb'
+      ? await chatApi.sendKbMessage(content)
+      : await chatApi.sendMessage(content)
     
     // 提取data字段的内容
     const aiContent = response.data || '抱歉，获取AI回复失败'
@@ -244,14 +256,47 @@ onMounted(() => {
 
 .chat-input {
   display: flex;
+  flex-direction: column;
   gap: 12px;
   padding: 20px;
   border-top: 1px solid #e0d5c5;
   background-color: #ede6d8;
 }
 
+.model-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.model-selector label {
+  color: #6b6b6b;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.model-selector select {
+  width: 220px;
+  padding: 8px 12px;
+  background-color: #faf6f0;
+  border: 1px solid #d0c5b5;
+  border-radius: 6px;
+  color: #3d3d3d;
+  font-size: 13px;
+}
+
+.model-selector select:focus {
+  outline: none;
+  border-color: #d4a574;
+}
+
+.input-row {
+  display: flex;
+  gap: 12px;
+}
+
 .chat-input textarea {
-  flex: 1;
+  width: 100%;
   padding: 12px 16px;
   background-color: #faf6f0;
   border: 1px solid #d0c5b5;

@@ -7,5 +7,12 @@ export const chatApi = {
     return service.post(`/ai/chat?message=${encodeURIComponent(message)}`, {}, {
       timeout: 60000 // 1分钟超时
     })
+  },
+
+  // 基于知识库发送消息
+  sendKbMessage: (message) => {
+    return service.post(`/ai/chat/kb?message=${encodeURIComponent(message)}`, {}, {
+      timeout: 60000 // 1分钟超时
+    })
   }
 }
