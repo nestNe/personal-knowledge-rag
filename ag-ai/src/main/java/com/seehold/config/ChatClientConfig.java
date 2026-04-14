@@ -4,6 +4,8 @@ import com.seehold.constant.PromptConstant;
 import com.seehold.tools.SearchEmbedTools;
 import com.seehold.tools.UserTools;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -29,10 +31,13 @@ public class ChatClientConfig {
     }
 
     @Bean
-    public ChatClient kbClient(OpenAiChatModel model, SearchEmbedTools searchEmbedTools){
+    public ChatClient kbClient(OpenAiChatModel model,
+                               ChatMemory chatMemory,
+                               SearchEmbedTools searchEmbedTools) {
         return ChatClient.builder(model)
                 .defaultSystem(PromptConstant.KB_PROMPT)
                 .defaultTools(searchEmbedTools)
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .build();
     }
 
