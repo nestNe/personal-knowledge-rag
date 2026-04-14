@@ -80,21 +80,22 @@ const handleLogin = async () => {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #1a1a1a;
+  background-color: #f5f0e6;
 }
 
 .login-container {
   width: 100%;
   max-width: 400px;
   padding: 40px;
-  background-color: #111;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #faf6f0;
+  border: 1px solid #e0d5c5;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(139, 115, 85, 0.14);
 }
 
 .login-title {
   text-align: center;
-  color: #4A9EFF;
+  color: #8b7355;
   margin-bottom: 30px;
   font-size: 24px;
   font-weight: 600;
@@ -113,32 +114,32 @@ const handleLogin = async () => {
 }
 
 .form-group label {
-  color: #ccc;
+  color: #6b6b6b;
   font-size: 14px;
   font-weight: 500;
 }
 
 .form-group input {
   padding: 12px 16px;
-  background-color: #222;
-  border: 1px solid #333;
-  border-radius: 4px;
-  color: #fff;
+  background-color: #faf6f0;
+  border: 1px solid #d0c5b5;
+  border-radius: 8px;
+  color: #3d3d3d;
   font-size: 14px;
   transition: border-color 0.2s;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #4A9EFF;
+  border-color: #d4a574;
 }
 
 .login-btn {
   padding: 12px;
-  background-color: #4A9EFF;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
+  background-color: #d4a574;
+  color: #3d3d3d;
+  border: 1px solid #c99564;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -147,11 +148,13 @@ const handleLogin = async () => {
 }
 
 .login-btn:hover {
-  background-color: #3A8EFF;
+  background-color: #c99564;
 }
 
 .login-btn:disabled {
-  background-color: #666;
+  background-color: #e0d5c5;
+  border-color: #e0d5c5;
+  color: #9b9b9b;
   cursor: not-allowed;
 }
 
@@ -162,16 +165,16 @@ const handleLogin = async () => {
   gap: 8px;
   margin-top: 20px;
   font-size: 14px;
-  color: #ccc;
+  color: #6b6b6b;
 }
 
 .form-footer a {
-  color: #4A9EFF;
+  color: #8b7355;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .form-footer a:hover {
-  color: #3A8EFF;
+  color: #d4a574;
 }
 </style>

@@ -539,13 +539,13 @@ onMounted(() => {
 }
 
 .btn.delete {
-  background-color: #1a1a1a;
-  color: #ff4d4f;
-  border-color: #ff4d4f;
+  background-color: #f8ecec;
+  color: #c17b7b;
+  border-color: #c17b7b;
 }
 
 .btn.delete:hover {
-  background-color: rgba(255, 77, 79, 0.1);
+  background-color: #f2dddd;
 }
 
 .btn.assign-role {
@@ -568,25 +568,29 @@ onMounted(() => {
 
 .page-btn {
   padding: 8px 16px;
-  background-color: #1a1a1a;
-  border: 1px solid #333;
+  background-color: #faf6f0;
+  border: 1px solid #d0c5b5;
   border-radius: 4px;
-  color: #fff;
+  color: #3d3d3d;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .page-btn:hover:not(:disabled) {
-  background-color: #333;
+  background-color: #e5dcc8;
+  border-color: #d4a574;
+  color: #8b7355;
 }
 
 .page-btn:disabled {
-  color: #666;
+  background-color: #e0d5c5;
+  border-color: #e0d5c5;
+  color: #9b9b9b;
   cursor: not-allowed;
 }
 
 .page-info {
-  color: #ccc;
+  color: #6b6b6b;
   font-size: 14px;
 }
 
@@ -773,5 +777,104 @@ onMounted(() => {
   color: #fff;
   font-size: 14px;
   cursor: pointer;
+}
+
+/* 暖黄主题覆盖 */
+.user-management {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-title {
+  color: #3d3d3d;
+  text-align: center;
+}
+
+.action-btn.primary,
+.search-btn,
+.btn.confirm {
+  background-color: #d4a574;
+  border-color: #c99564;
+  color: #3d3d3d;
+}
+
+.action-btn.primary:hover,
+.search-btn:hover,
+.btn.confirm:hover {
+  background-color: #c99564;
+}
+
+.search-box input,
+.form-item input,
+.form-item select {
+  background-color: #faf6f0;
+  border-color: #d0c5b5;
+  color: #3d3d3d;
+}
+
+.user-table,
+.dialog-content {
+  background-color: #faf6f0;
+  border-color: #e0d5c5;
+}
+
+.user-table th {
+  background-color: #ede6d8;
+  color: #6b6b6b;
+}
+
+.user-table td,
+.form-item label,
+.dialog-header h3,
+.dialog-body p,
+.role-item label {
+  color: #3d3d3d;
+}
+
+.user-table th,
+.user-table td,
+.dialog-header,
+.dialog-footer {
+  border-color: #e0d5c5;
+}
+
+.user-table tr:hover {
+  background-color: #f4e9d8;
+}
+
+.btn.edit {
+  background-color: #faf6f0;
+  color: #8b7355;
+  border-color: #d4a574;
+}
+
+.btn.assign-role {
+  background-color: #faf6f0;
+  color: #8b7355;
+  border-color: #d4a574;
+}
+
+.btn.cancel {
+  background-color: #ede6d8;
+  color: #6b6b6b;
+  border-color: #d0c5b5;
+}
+
+.status-badge.active {
+  background-color: rgba(122, 158, 110, 0.2);
+  color: #7a9e6e;
+}
+
+.status-badge.inactive {
+  background-color: rgba(193, 123, 123, 0.2);
+  color: #c17b7b;
+}
+
+.message.success {
+  background-color: #7a9e6e;
+}
+
+.message.error {
+  background-color: #c17b7b;
 }
 </style>

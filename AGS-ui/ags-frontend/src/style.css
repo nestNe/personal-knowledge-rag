@@ -7,46 +7,48 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #1a1a1a;
-  color: #fff;
+  background-color: #f5f0e6;
+  color: #3d3d3d;
   line-height: 1.6;
   min-height: 100vh;
 }
 
 /* 全局链接样式 */
 a {
-  color: #4A9EFF;
+  color: #8b7355;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 a:hover {
-  color: #3A8EFF;
+  color: #d4a574;
 }
 
 /* 全局按钮样式 */
 button {
   font-family: inherit;
   cursor: pointer;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid #c99564;
+  border-radius: 8px;
+  background-color: #d4a574;
+  color: #3d3d3d;
   transition: all 0.2s;
 }
 
 /* 全局输入框样式 */
 input, textarea, select {
   font-family: inherit;
-  background-color: #222;
-  border: 1px solid #333;
-  border-radius: 4px;
-  color: #fff;
+  background-color: #faf6f0;
+  border: 1px solid #d0c5b5;
+  border-radius: 8px;
+  color: #3d3d3d;
   padding: 8px 12px;
   transition: border-color 0.2s;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #4A9EFF;
+  border-color: #d4a574;
 }
 
 /* 应用容器 */
@@ -57,7 +59,7 @@ input:focus, textarea:focus, select:focus {
 
 /* 通用标题样式 */
 h1, h2, h3, h4, h5, h6 {
-  color: #fff;
+  color: #3d3d3d;
   font-weight: 600;
   margin-bottom: 16px;
 }
@@ -82,11 +84,11 @@ table {
 th, td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e0d5c5;
 }
 
 th {
-  background-color: #1a1a1a;
+  background-color: #ede6d8;
   font-weight: 600;
 }
 
@@ -95,9 +97,9 @@ th {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(139, 115, 85, 0.3);
   border-radius: 50%;
-  border-top-color: #4A9EFF;
+  border-top-color: #d4a574;
   animation: spin 1s ease-in-out infinite;
 }
 
@@ -109,8 +111,8 @@ th {
 
 /* 通用错误信息 */
 .error-message {
-  background-color: rgba(255, 77, 79, 0.2);
-  color: #ff4d4f;
+  background-color: rgba(193, 123, 123, 0.2);
+  color: #c17b7b;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
@@ -118,8 +120,8 @@ th {
 
 /* 通用成功信息 */
 .success-message {
-  background-color: rgba(82, 196, 26, 0.2);
-  color: #52c41a;
+  background-color: rgba(122, 158, 110, 0.2);
+  color: #7a9e6e;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
@@ -127,8 +129,8 @@ th {
 
 /* 通用警告信息 */
 .warning-message {
-  background-color: rgba(250, 173, 20, 0.2);
-  color: #faad14;
+  background-color: rgba(212, 165, 116, 0.2);
+  color: #d4a574;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
@@ -136,8 +138,8 @@ th {
 
 /* 通用信息 */
 .info-message {
-  background-color: rgba(74, 158, 255, 0.2);
-  color: #4A9EFF;
+  background-color: rgba(122, 158, 181, 0.2);
+  color: #7a9eb5;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 16px;
@@ -286,44 +288,44 @@ th {
 }
 
 .text-muted {
-  color: #999;
+  color: #6b6b6b;
 }
 
 .text-primary {
-  color: #4A9EFF;
+  color: #8b7355;
 }
 
 .text-success {
-  color: #52c41a;
+  color: #7a9e6e;
 }
 
 .text-warning {
-  color: #faad14;
+  color: #d4a574;
 }
 
 .text-danger {
-  color: #ff4d4f;
+  color: #c17b7b;
 }
 
 /* 边框 */
 .border {
-  border: 1px solid #333;
+  border: 1px solid #e0d5c5;
 }
 
 .border-top {
-  border-top: 1px solid #333;
+  border-top: 1px solid #e0d5c5;
 }
 
 .border-bottom {
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e0d5c5;
 }
 
 .border-left {
-  border-left: 1px solid #333;
+  border-left: 1px solid #e0d5c5;
 }
 
 .border-right {
-  border-right: 1px solid #333;
+  border-right: 1px solid #e0d5c5;
 }
 
 /* 圆角 */
@@ -341,28 +343,28 @@ th {
 
 /* 阴影 */
 .shadow {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.12);
 }
 
 .shadow-lg {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 24px rgba(139, 115, 85, 0.16);
 }
 
 /* 背景色 */
 .bg-dark {
-  background-color: #111;
+  background-color: #ede6d8;
 }
 
 .bg-darker {
-  background-color: #0a0a0a;
+  background-color: #e5dcc8;
 }
 
 .bg-light {
-  background-color: #222;
+  background-color: #faf6f0;
 }
 
 .bg-primary {
-  background-color: #4A9EFF;
+  background-color: #d4a574;
 }
 
 /* 宽度 */

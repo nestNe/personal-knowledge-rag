@@ -128,22 +128,26 @@ onMounted(() => {
   flex-direction: column;
   gap: 20px;
   height: calc(100vh - 180px);
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .page-title {
   font-size: 24px;
   font-weight: 600;
-  color: #fff;
+  color: #3d3d3d;
   margin: 0;
+  text-align: center;
 }
 
 .chat-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #111;
-  border: 1px solid #333;
-  border-radius: 6px;
+  background-color: #faf6f0;
+  border: 1px solid #e0d5c5;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -170,15 +174,15 @@ onMounted(() => {
 }
 
 .message-content {
-  background-color: #222;
+  background-color: #ede6d8;
   border-radius: 8px;
   padding: 12px 16px;
-  border: 1px solid #333;
+  border: 1px solid #e0d5c5;
 }
 
 .message.user .message-content {
-  background-color: #1a1a33;
-  border-color: #4A9EFF;
+  background-color: #f4e9d8;
+  border-color: #d4a574;
 }
 
 .message-header {
@@ -191,15 +195,15 @@ onMounted(() => {
 
 .message-role {
   font-weight: 600;
-  color: #4A9EFF;
+  color: #8b7355;
 }
 
 .message-time {
-  color: #999;
+  color: #6b6b6b;
 }
 
 .message-body {
-  color: #fff;
+  color: #3d3d3d;
   line-height: 1.5;
   font-size: 14px;
 }
@@ -216,7 +220,7 @@ onMounted(() => {
 .loading-dots span {
   width: 8px;
   height: 8px;
-  background-color: #4A9EFF;
+  background-color: #d4a574;
   border-radius: 50%;
   animation: loading 1.4s infinite ease-in-out both;
 }
@@ -242,17 +246,17 @@ onMounted(() => {
   display: flex;
   gap: 12px;
   padding: 20px;
-  border-top: 1px solid #333;
-  background-color: #1a1a1a;
+  border-top: 1px solid #e0d5c5;
+  background-color: #ede6d8;
 }
 
 .chat-input textarea {
   flex: 1;
   padding: 12px 16px;
-  background-color: #222;
-  border: 1px solid #333;
+  background-color: #faf6f0;
+  border: 1px solid #d0c5b5;
   border-radius: 4px;
-  color: #fff;
+  color: #3d3d3d;
   font-size: 14px;
   resize: none;
   min-height: 60px;
@@ -262,13 +266,13 @@ onMounted(() => {
 
 .chat-input textarea:focus {
   outline: none;
-  border-color: #4A9EFF;
+  border-color: #d4a574;
 }
 
 .send-btn {
   padding: 0 24px;
-  background-color: #4A9EFF;
-  color: #fff;
+  background-color: #d4a574;
+  color: #3d3d3d;
   border: none;
   border-radius: 4px;
   font-size: 14px;
@@ -279,11 +283,12 @@ onMounted(() => {
 }
 
 .send-btn:hover:not(:disabled) {
-  background-color: #3A8EFF;
+  background-color: #c99564;
 }
 
 .send-btn:disabled {
-  background-color: #666;
+  background-color: #e0d5c5;
+  color: #9b9b9b;
   cursor: not-allowed;
 }
 
@@ -293,15 +298,15 @@ onMounted(() => {
 }
 
 .chat-messages::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #f5f0e6;
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #d0c5b5;
   border-radius: 4px;
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: #c7b9a6;
 }
 </style>
