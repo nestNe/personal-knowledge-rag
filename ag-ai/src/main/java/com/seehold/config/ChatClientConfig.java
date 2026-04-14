@@ -1,6 +1,7 @@
 package com.seehold.config;
 
 import com.seehold.constant.PromptConstant;
+import com.seehold.tools.SearchEmbedTools;
 import com.seehold.tools.UserTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -24,6 +25,14 @@ public class ChatClientConfig {
         return ChatClient.builder(model)
                 .defaultSystem(PromptConstant.USER_MANAGE_PROMPT)
                 .defaultTools(userTools)
+                .build();
+    }
+
+    @Bean
+    public ChatClient kbClient(OpenAiChatModel model, SearchEmbedTools searchEmbedTools){
+        return ChatClient.builder(model)
+                .defaultSystem(PromptConstant.KB_PROMPT)
+                .defaultTools(searchEmbedTools)
                 .build();
     }
 

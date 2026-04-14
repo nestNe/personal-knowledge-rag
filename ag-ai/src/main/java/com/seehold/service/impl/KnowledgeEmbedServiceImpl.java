@@ -67,9 +67,9 @@ public class KnowledgeEmbedServiceImpl implements KnowledgeEmbedService {
             Map<String, Object> metadata = Map.of(
                     "source", filename == null ? "unknown" : filename,
                     "category", category,
-                    "line_number", lineNum,
-                    "total_lines", paragraphs.size(),
-                    "upload_time", LocalDateTime.now().toString()
+                    "lineNumber", lineNum,
+                    "totalLines", paragraphs.size(),
+                    "uploadTime", LocalDateTime.now().toString()
             );
 
             documents.add(new Document(paragraph, metadata));

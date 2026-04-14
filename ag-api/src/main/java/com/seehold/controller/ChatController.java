@@ -22,7 +22,8 @@ import java.util.Map;
 public class ChatController {
 
     private final ChatClient userManageClient;
-    private final EmbeddingModel embeddingModel;
+
+    private final ChatClient kbClient;
 
     /**
      * 对话
@@ -38,6 +39,19 @@ public class ChatController {
         String prompt = "当前用户id:" + userDetails.getId() + ", " + message;
         String res = userManageClient
                 .prompt(prompt)
+                .call()
+                .content();
+
+        log.info("Result of message: {}", res);
+        return Result.success(res);
+    }
+
+    @PostMapping("/chat/kb")
+    @PreAuthorize("hasAuthority('agent:chat')")
+    public Result<String> chatKb(@RequestParam("message") String message) {
+        log.info("Received message: {}", message);
+        String res = kbClient
+                .prompt(message)
                 .call()
                 .content();
 
