@@ -5,23 +5,33 @@
         <h1 class="logo">AGS</h1>
         <nav class="feature-nav">
           <router-link to="/dashboard" class="nav-item" active-class="active">
-            <span class="nav-icon">🏠</span>
+            <span class="nav-icon">
+              <Home theme="outline" size="16" fill="currentColor" />
+            </span>
             <span class="nav-text">首页</span>
           </router-link>
           <router-link to="/users" class="nav-item" active-class="active">
-            <span class="nav-icon">👥</span>
+            <span class="nav-icon">
+              <EveryUser theme="outline" size="16" fill="currentColor" />
+            </span>
             <span class="nav-text">用户管理</span>
           </router-link>
           <router-link to="/roles" class="nav-item" active-class="active">
-            <span class="nav-icon">🎭</span>
+            <span class="nav-icon">
+              <Peoples theme="outline" size="16" fill="currentColor" />
+            </span>
             <span class="nav-text">角色管理</span>
           </router-link>
           <router-link to="/permissions" class="nav-item" active-class="active">
-            <span class="nav-icon">🔒</span>
+            <span class="nav-icon">
+              <Lock theme="outline" size="16" fill="currentColor" />
+            </span>
             <span class="nav-text">权限管理</span>
           </router-link>
           <router-link to="/chat" class="nav-item" active-class="active">
-            <span class="nav-icon">💬</span>
+            <span class="nav-icon">
+              <MessageOne theme="outline" size="16" fill="currentColor" />
+            </span>
             <span class="nav-text">AI对话</span>
           </router-link>
         </nav>
@@ -49,6 +59,7 @@
 </template>
 
 <script setup>
+import { Home, EveryUser, Peoples, Lock, MessageOne } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { authApi } from '../api/auth'
@@ -134,7 +145,10 @@ const logout = async () => {
 }
 
 .nav-icon {
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .breadcrumb {

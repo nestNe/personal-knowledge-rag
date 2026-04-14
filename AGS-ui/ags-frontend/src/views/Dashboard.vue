@@ -1,30 +1,41 @@
 <template>
   <div class="dashboard">
-    <h2 class="page-title">首页</h2>
+    <h2 class="page-title">
+      <Home theme="outline" size="30" fill="#5c4b3a" />
+      <span>首页</span>
+    </h2>
     <div class="dashboard-cards">
       <div class="card">
-        <div class="card-icon">👥</div>
+        <div class="card-icon">
+          <EveryUser theme="outline" size="30" fill="#8b7355" />
+        </div>
         <div class="card-content">
           <h3 class="card-title">用户数量</h3>
           <p class="card-value">100+</p>
         </div>
       </div>
       <div class="card">
-        <div class="card-icon">🎭</div>
+        <div class="card-icon">
+          <Peoples theme="outline" size="30" fill="#8b7355" />
+        </div>
         <div class="card-content">
           <h3 class="card-title">角色数量</h3>
           <p class="card-value">10+</p>
         </div>
       </div>
       <div class="card">
-        <div class="card-icon">🔒</div>
+        <div class="card-icon">
+          <Lock theme="outline" size="30" fill="#8b7355" />
+        </div>
         <div class="card-content">
           <h3 class="card-title">权限数量</h3>
           <p class="card-value">50+</p>
         </div>
       </div>
       <div class="card">
-        <div class="card-icon">💬</div>
+        <div class="card-icon">
+          <MessageOne theme="outline" size="30" fill="#8b7355" />
+        </div>
         <div class="card-content">
           <h3 class="card-title">对话次数</h3>
           <p class="card-value">1000+</p>
@@ -56,7 +67,7 @@
 </template>
 
 <script setup>
-// 首页组件
+import { Home, EveryUser, Peoples, Lock, MessageOne } from '@icon-park/vue-next'
 </script>
 
 <style scoped>
@@ -70,6 +81,10 @@
 }
 
 .page-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   font-size: 24px;
   font-weight: 600;
   color: #3d3d3d;
