@@ -200,16 +200,16 @@ WHERE r.name = 'admin'
                  'user:list', 'user:create', 'user:update', 'user:delete', 'user:view', 'user:assign-role',
                  'role:list', 'role:create', 'role:update', 'role:delete', 'role:view', 'role:assign-perm',
                  'perm:list', 'perm:create', 'perm:update', 'perm:delete', 'perm:view',
-                 'agent:chat'
+                 'agent:chat', 'agent:embedding'
     );
 
--- user 角色权限（仅AI对话）
+-- user 角色权限
 INSERT INTO role_permissions (role_id, permission_id)
 SELECT r.id, p.id
 FROM roles r,
      permissions p
 WHERE r.name = 'user'
-  AND p.name IN ('agent:chat');
+  AND p.name IN ('agent:chat','agent:embedding');
 
 -- 插入超级管理员用户
 INSERT INTO users (username, email, password_hash, avatar, status, created_at, updated_at)
