@@ -15,6 +15,13 @@
  ::::::::::::::::::::::::::::::::::::::::::::::::::::
 ```
 
+#### 页面效果
+<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/a073da08-e239-4226-9a08-1f4ed551c00c" />
+
+
+<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/a8c5246b-9a39-49c9-b793-0c8241dcdf2b" />
+
+
 #### 项目模块介绍
 
 ```text
