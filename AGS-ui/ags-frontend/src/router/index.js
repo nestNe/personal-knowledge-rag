@@ -85,6 +85,16 @@ const protectedRoutes = [
           requiresAuth: true,
           permissions: ['agent:chat']
         }
+      },
+      {
+        path: 'knowledge-base',
+        name: 'KnowledgeBase',
+        component: () => import('../views/KnowledgeBase.vue'),
+        meta: {
+          title: '知识库',
+          requiresAuth: true,
+          permissions: ['agent:embedding']
+        }
       }
     ]
   },

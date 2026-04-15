@@ -34,6 +34,12 @@
             </span>
             <span class="nav-text">AI对话</span>
           </router-link>
+          <router-link to="/knowledge-base" class="nav-item" active-class="active">
+            <span class="nav-icon">
+              <BookOne theme="outline" size="16" fill="currentColor" />
+            </span>
+            <span class="nav-text">知识库</span>
+          </router-link>
         </nav>
         <div class="user-actions">
           <span class="user-email">{{ userStore.userInfo?.email }}</span>
@@ -59,7 +65,7 @@
 </template>
 
 <script setup>
-import { Home, EveryUser, Peoples, Lock, MessageOne } from '@icon-park/vue-next'
+import { Home, EveryUser, Peoples, Lock, MessageOne, BookOne } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { authApi } from '../api/auth'
