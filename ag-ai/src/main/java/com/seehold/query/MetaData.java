@@ -3,11 +3,12 @@ package com.seehold.query;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 public class MetaData {
+
+    //统一用String存userId
+    private String userId;
 
     private String source;
 

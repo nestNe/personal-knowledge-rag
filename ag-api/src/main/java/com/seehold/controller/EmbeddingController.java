@@ -1,12 +1,14 @@
 package com.seehold.controller;
 
 import com.seehold.result.Result;
+import com.seehold.security.UserDetailsImpl;
 import com.seehold.service.KnowledgeEmbedService;
 import com.seehold.vo.EmbedResultVO;
 import com.seehold.vo.EmbedsResultVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +36,9 @@ public class EmbeddingController {
     @PostMapping("/batch")
     @PreAuthorize("hasAuthority('agent:embedding')")
     public Result<EmbedResultVO> embedBatch(
-            @RequestParam("file") MultipartFile file, @RequestParam("type") String type
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("type") String type,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         if (file.isEmpty())
             return Result.error("文件不能为空");
@@ -45,7 +49,7 @@ public class EmbeddingController {
             return Result.error("仅支持 .txt 文本文件");
 
         try {
-            EmbedResultVO result = knowledgeEmbedService.processSingleFile(file, type);
+            EmbedResultVO result = knowledgeEmbedService.processSingleFile(file, type, userDetails.getId());
             return Result.success(result);
         } catch (Exception e) {
             log.error("文件向量化失败: {}", filename, e);
@@ -65,7 +69,9 @@ public class EmbeddingController {
     @PostMapping("/batches")
     @PreAuthorize("hasAuthority('agent:embedding')")
     public Result<EmbedsResultVO> embedBatches(
-            @RequestParam("files") List<MultipartFile> files, @RequestParam("type") String type
+            @RequestParam("files") List<MultipartFile> files,
+            @RequestParam("type") String type,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         if (files == null || files.isEmpty())
             return Result.error("文件不能为空");
@@ -82,7 +88,7 @@ public class EmbeddingController {
             }
 
             try {
-                EmbedResultVO result = knowledgeEmbedService.processSingleFile(file, type);
+                EmbedResultVO result = knowledgeEmbedService.processSingleFile(file, type, userDetails.getId());
                 results.add(result);
             } catch (Exception e) {
                 log.error("文件向量化失败: {}", filename, e);

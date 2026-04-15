@@ -42,20 +42,18 @@ public class ChatController {
                 .call()
                 .content();
 
-        log.info("Result of message: {}", res);
         return Result.success(res);
     }
 
     @PostMapping("/chat/kb")
     @PreAuthorize("hasAuthority('agent:chat')")
-    public Result<String> chatKb(@RequestParam("message") String message) {
+    public Result<String> chatKb(@RequestParam("message") String message, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("Received message: {}", message);
+        String prompt = "当前用户id:" + userDetails.getId() + "," + message;
         String res = kbClient
-                .prompt(message)
+                .prompt(prompt)
                 .call()
                 .content();
-
-        log.info("Result of message: {}", res);
         return Result.success(res);
     }
 

@@ -33,7 +33,7 @@ public class KnowledgeEmbedServiceImpl implements KnowledgeEmbedService {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public EmbedResultVO processSingleFile(MultipartFile file, String category) throws IOException {
+    public EmbedResultVO processSingleFile(MultipartFile file, String category, Long userId) throws IOException {
         String filename = file.getOriginalFilename();
         long startTime = System.currentTimeMillis();
 
@@ -65,6 +65,7 @@ public class KnowledgeEmbedServiceImpl implements KnowledgeEmbedService {
             lineNum++;
             // 元数据记录来源信息
             Map<String, Object> metadata = Map.of(
+                    "userId", userId.toString(),
                     "source", filename == null ? "unknown" : filename,
                     "category", category,
                     "lineNumber", lineNum,

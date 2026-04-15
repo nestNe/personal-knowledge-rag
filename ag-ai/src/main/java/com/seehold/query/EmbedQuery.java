@@ -6,6 +6,9 @@ import org.springframework.ai.tool.annotation.ToolParam;
 @Data
 public class EmbedQuery {
 
+    @ToolParam(description = "当前用户Id：需要把用户id传入")
+    private String userId;
+
     @ToolParam(description = "用户的prompt")
     private String query;
 

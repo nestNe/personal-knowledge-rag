@@ -14,7 +14,6 @@ import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,7 @@ public class SearchEmbedTools {
 
     @Tool(description = """
             从用户的个人知识库中检索与当前问题相关的文本片段。
+            如果返回结果为空，可能当前用户没有相关的个人知识库。
             """)
     public EmbedQueryResult searchEmbed(EmbedQuery embedQuery) {
         log.info("调用searchEmbed, embedQuery: {}", embedQuery);
@@ -37,14 +37,14 @@ public class SearchEmbedTools {
                 .topK(embedQuery.getTopK());
 
         //TODO 后续在数据库查询分类，再精确匹配
-        /*if (embedQuery.getCategory() != null && !embedQuery.getCategory().isEmpty()) {
+        if (embedQuery.getUserId() != null && !embedQuery.getUserId().isEmpty()) {
             Filter.Expression filterExpr = new Filter.Expression(
                     Filter.ExpressionType.EQ,
-                    new Filter.Key("category"),
-                    new Filter.Value(embedQuery.getCategory())
+                    new Filter.Key("userId"),
+                    new Filter.Value(embedQuery.getUserId())
             );
             request.filterExpression(filterExpr);
-        }*/
+        }
 
         List<Document> documents = vectorStore.similaritySearch(request.build());
 
@@ -56,6 +56,7 @@ public class SearchEmbedTools {
                     .lineNumber(Integer.parseInt(map.get("lineNumber").toString()))
                     .totalLines(Integer.parseInt(map.get("totalLines").toString()))
                     .uploadTime(map.get("uploadTime").toString())
+                    .userId(map.get("userId").toString())
                     .build();
 
             EmbedResult embResult = EmbedResult.builder()
@@ -65,6 +66,8 @@ public class SearchEmbedTools {
                     .build();
             embeds.add(embResult);
         });
+
+        log.info("调用searchEmbed, result: score({}) >> {}", embeds.get(0).getScore(),embeds.get(0).getMetaData());
 
         return EmbedQueryResult.builder()
                 .topK(embedQuery.getTopK())
