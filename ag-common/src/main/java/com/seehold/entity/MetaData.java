@@ -1,4 +1,4 @@
-package com.seehold.query;
+package com.seehold.entity;
 
 import lombok.Builder;
 import lombok.Data;

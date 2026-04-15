@@ -3,12 +3,17 @@ package com.seehold.controller;
 import com.seehold.result.Result;
 import com.seehold.security.UserDetailsImpl;
 import com.seehold.service.KnowledgeEmbedService;
+import com.seehold.service.VectorStoreQueryService;
 import com.seehold.vo.EmbedResultVO;
 import com.seehold.vo.EmbedsResultVO;
+import com.seehold.vo.PageVO;
+import com.seehold.vo.VectorStoreRecordVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +30,7 @@ import java.util.List;
 public class EmbeddingController {
 
     private final KnowledgeEmbedService knowledgeEmbedService;
+    private final VectorStoreQueryService vectorStoreQueryService;
 
     /**
      * 接收单个文本文件
@@ -100,6 +106,29 @@ public class EmbeddingController {
                 .embeds(results)
                 .errs(errs)
                 .build());
+    }
+
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('agent:embedding')")
+    public Result<PageVO<VectorStoreRecordVO>> pageCurrentUserEmbeds(
+            @RequestParam(defaultValue = "1") Long current,
+            @RequestParam(defaultValue = "10") Long size,
+            @RequestParam(required = false) String keyword,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        return Result.success(vectorStoreQueryService.pageByCurrentUser(userDetails.getId(), current, size, keyword));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('agent:embedding')")
+    public Result<VectorStoreRecordVO> getEmbedDetailById(
+            @PathVariable("id") String id
+    ) {
+        VectorStoreRecordVO detail = vectorStoreQueryService.getDetailById(id);
+        if (detail == null) {
+            return Result.error(404, "记录不存在");
+        }
+        return Result.success(detail);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.seehold.query;
+package com.seehold.vo;
 
 import com.seehold.entity.MetaData;
 import lombok.Builder;
@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EmbedResult {
+public class VectorStoreRecordVO {
 
-    private String text;
+    private String id;
 
-    private double score;
+    private String content;
 
     private MetaData metaData;
 }

@@ -3,7 +3,7 @@ package com.seehold.tools;
 import com.seehold.query.EmbedQuery;
 import com.seehold.query.EmbedQueryResult;
 import com.seehold.query.EmbedResult;
-import com.seehold.query.MetaData;
+import com.seehold.entity.MetaData;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
