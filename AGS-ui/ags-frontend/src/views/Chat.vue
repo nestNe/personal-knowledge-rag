@@ -32,8 +32,8 @@
         <div class="model-selector">
           <label for="chat-model">回答模式</label>
           <select id="chat-model" v-model="selectedMode">
-            <option value="normal">普通聊天模型</option>
             <option value="kb">知识库检索模型</option>
+            <option value="normal">普通聊天模型</option>
           </select>
         </div>
         <div class="input-row">
@@ -67,39 +67,39 @@ const messages = ref([
 const inputMessage = ref('')
 const loading = ref(false)
 const messagesContainer = ref(null)
-const selectedMode = ref('normal')
+const selectedMode = ref('kb')
 
 // 发送消息
 const sendMessage = async () => {
   const content = inputMessage.value.trim()
   if (!content || loading.value) return
-  
+
   // 添加用户消息
   messages.value.push({
     role: 'user',
     content,
     time: new Date().toLocaleTimeString()
   })
-  
+
   inputMessage.value = ''
   loading.value = true
-  
+
   // 滚动到底部
   await nextTick()
   scrollToBottom()
-  
+
   try {
     // 调用API
     const response = selectedMode.value === 'kb'
       ? await chatApi.sendKbMessage(content)
       : await chatApi.sendMessage(content)
-    
+
     // 提取data字段的内容
     const aiContent = response.data || '抱歉，获取AI回复失败'
-    
+
     // 解析markdown
     const htmlContent = marked(aiContent)
-    
+
     // 添加AI回复
     messages.value.push({
       role: 'ai',
