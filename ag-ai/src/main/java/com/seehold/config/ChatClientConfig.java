@@ -6,21 +6,20 @@ import com.seehold.tools.UserTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.openai.OpenAiEmbeddingModel;
-import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Configuration
 public class ChatClientConfig {
+
+    @Bean
+    public ChatClient fastClient(OpenAiChatModel model) {
+        return ChatClient.builder(model)
+                .defaultSystem(PromptConstant.FAST_PROMPT)
+                .build();
+    }
 
     @Bean
     public ChatClient userManageClient(OpenAiChatModel model, UserTools userTools) {
@@ -37,20 +36,9 @@ public class ChatClientConfig {
         return ChatClient.builder(model)
                 .defaultSystem(PromptConstant.KB_PROMPT)
                 .defaultTools(searchEmbedTools)
-                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .defaultAdvisors(
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()
+                )
                 .build();
     }
-
-    /*@Bean
-    public VectorStore vectorStore(JdbcTemplate jdbcTemplate, EmbeddingModel embeddingModel) {
-        return PgVectorStore.builder(jdbcTemplate, embeddingModel)
-                .dimensions(1536)
-                .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
-                .indexType(PgVectorStore.PgIndexType.HNSW)
-                .initializeSchema(true)
-                .schemaName("public")
-                .vectorTableName("base_framework")
-                .maxDocumentBatchSize(10000)
-                .build();
-    }*/
 }
