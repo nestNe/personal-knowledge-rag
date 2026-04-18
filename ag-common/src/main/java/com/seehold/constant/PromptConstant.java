@@ -99,4 +99,27 @@ public class PromptConstant {
             输出：总结内容
             输出为一段话，不要有多余的字符，确保内容的简洁性和明了性。
             """;
+
+    // 新增：带结构的摘要生成模板（使用 StringTemplate 语法）
+    public static final String SUMMARY_TEMPLATE_PROMPT = """
+            请根据以下对话生成会话摘要：
+            ## 对话摘要
+            {summary}
+            ## 最新消息
+            {messages}
+            
+            要求：
+            1. 总结核心讨论主题（50字以内）
+            2. 提取关键信息点（如有）
+            3. 保持客观，不添加未提及的内容
+            
+            直接输出摘要内容，不要解释。
+            """;
+
+    // 标题生成模板
+    public static final String TITLE_TEMPLATE_PROMPT = """
+            为以下会话摘要生成标题（10字以内，不含标点）：
+            {summary}
+            只输出标题文字，不要引号或其他符号。
+            """;
 }

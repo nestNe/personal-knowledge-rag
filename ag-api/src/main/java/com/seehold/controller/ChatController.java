@@ -9,6 +9,7 @@ import com.seehold.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,15 @@ public class ChatController {
         return Result.success(res);
     }
 
+    /**
+     * 聊天接口
+     * 记忆功能、摘要功能、知识库功能
+     *
+     * @param message
+     * @param sessionId
+     * @param userDetails
+     * @return
+     */
     @PostMapping("/chat/kb")
     @PreAuthorize("hasAuthority('agent:chat')")
     public Result<String> chatKb(
@@ -57,29 +67,22 @@ public class ChatController {
         ChatSession session = chatSessionService.getSession(userId, sessionId);
 
         //新会话
-        if (session == null) {
-            String sid = UUID.randomUUID().toString();
-            String content = chatCore(systemContext, message, sid);
-            // 创建新的会话
-            ChatSession createSession = chatSessionService.createSession(userId, content, sid);
-            return Result.success(content);
-        }
+        if (session == null)
+            session = chatSessionService.createSession(userId);
 
         // 3. 调用 AI（使用 Spring AI 的 Advisor 机制）
         String content = "";
         if (session.getSessionId() != null && session.getUserId().equals(userId))
-            chatCore(systemContext, message, session.getSessionId());
+            content = chatCore(systemContext, message, session.getSessionId());
 
         // 4. 更新会话统计
         chatSessionService.updateSession(session.getSessionId());
 
-        // 5. 异步生成摘要（第3条消息时触发）
-        /*ChatSession session = chatSessionService.generateSummary(curSessionId);
-        if (session.getMessageCount() == 3) {
-            chatSessionService.generateSummary(curSessionId, kbClient);
-        }
+        // 5. 异步生成摘要（首条消息 + 每 3 条消息触发一次）
+        int nextCount = (session.getMessageCount() == null ? 0 : session.getMessageCount()) + 1;
+        if (nextCount == 1 || nextCount % 3 == 0)
+            chatSessionService.generateSummary(session.getSessionId(), content, message);
 
-        return Result.success(new ChatResponse(response, curSessionId));*/
         return Result.success(content);
     }
 

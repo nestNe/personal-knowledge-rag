@@ -37,4 +37,4 @@ build/
 /mvnw.cmd
 /ag-admin/src/main/resources/application-local.yaml
 /commit-type.png
-/prompt/list.txt
+/docs/list.txt

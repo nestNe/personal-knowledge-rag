@@ -13,7 +13,7 @@ public interface ChatSessionService {
      */
     ChatSession getSession(Long userId, String requestedSessionId);
 
-    ChatSession createSession(Long userId, String content,String sessionId);
+    ChatSession createSession(Long userId);
 
     /**
      * 更新会话统计（每次对话后调用）
@@ -39,5 +39,5 @@ public interface ChatSessionService {
     /**
      * AI 自动生成会话摘要（异步）
      */
-    void generateSummary(String sessionId, ChatClient chatClient);
+    void generateSummary(String sessionId, String content,String question);
 }
