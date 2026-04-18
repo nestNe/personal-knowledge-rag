@@ -10,10 +10,13 @@ import com.seehold.mapper.ChatSessionMapper;
 
 import com.seehold.service.ChatSessionService;
 import io.netty.util.internal.StringUtil;
-import lombok.AllArgsConstructor;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -25,7 +28,7 @@ import java.util.UUID;
 import java.util.Collections;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class ChatSessionServiceImpl implements ChatSessionService {
 
@@ -34,6 +37,10 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     private final ChatMemoryMapper chatMemoryMapper;
 
     private final ChatClient fastClient;
+
+    @Value("${spring.ai.openai.chat.options.model}")
+    @Getter
+    private String modelType;
 
     private final PromptTemplate summaryPrompt = new PromptTemplate(PromptConstant.SUMMARY_TEMPLATE_PROMPT);
 
@@ -64,10 +71,11 @@ public class ChatSessionServiceImpl implements ChatSessionService {
                 .userId(userId)
                 .title("新会话")
                 .summary("新会话")
-                .modelType("ASSISTANT")
+                .modelType(modelType)
                 .isActive(true)
                 .messageCount(0)
                 .build();
+        log.info("创建会话 {}", session);
         chatSessionMapper.insert(session);
         return session;
     }
