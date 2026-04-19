@@ -62,8 +62,8 @@ const handleLogin = async () => {
     // 保存用户信息
     userStore.setUserInfo(userInfo, accessToken, refreshToken, permissions)
     
-    // 跳转到原页面或首页
-    const redirect = route.query.redirect || '/dashboard'
+    // 跳转到原页面或 AI 对话
+    const redirect = route.query.redirect || '/chat'
     router.push(redirect)
   } catch (error) {
     console.error('登录失败:', error)

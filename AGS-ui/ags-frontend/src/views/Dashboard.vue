@@ -2,7 +2,7 @@
   <div class="dashboard">
     <h2 class="page-title">
       <Home theme="outline" size="30" fill="#5c4b3a" />
-      <span>首页</span>
+      <span>控制台概览</span>
     </h2>
     <div class="dashboard-cards">
       <div class="card">

@@ -4,7 +4,7 @@
       <h1 class="error-code">403</h1>
       <h2 class="error-title">无权限访问</h2>
       <p class="error-message">抱歉，您没有权限访问该页面</p>
-      <router-link to="/" class="error-btn">返回首页</router-link>
+      <router-link to="/chat" class="error-btn">返回 AI 对话</router-link>
     </div>
   </div>
 </template>

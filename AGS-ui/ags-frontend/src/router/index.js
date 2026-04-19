@@ -35,14 +35,14 @@ const protectedRoutes = [
     path: '/',
     name: 'Layout',
     component: () => import('../layouts/MainLayout.vue'),
-    redirect: '/dashboard',
+    redirect: '/chat',
     children: [
       {
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('../views/Dashboard.vue'),
         meta: {
-          title: '首页',
+          title: '控制台概览',
           requiresAuth: true
         }
       },
@@ -124,9 +124,9 @@ router.beforeEach(async (to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title || 'AGS Admin'
   
-  // 已登录用户访问登录/注册页，重定向到首页
+  // 已登录用户访问登录/注册页，重定向到 AI 对话
   if (token && (to.path === '/login' || to.path === '/register')) {
-    next({ path: '/dashboard' })
+    next({ path: '/chat' })
     return
   }
   

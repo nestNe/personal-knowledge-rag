@@ -1,96 +1,66 @@
 <template>
-  <div class="main-layout">
-    <header class="top-nav">
-      <div class="top-nav-main">
-        <h1 class="logo">AGS</h1>
-        <nav class="feature-nav">
-          <router-link to="/dashboard" class="nav-item" active-class="active">
-            <span class="nav-icon">
-              <Home theme="outline" size="16" fill="currentColor" />
-            </span>
-            <span class="nav-text">首页</span>
-          </router-link>
-          <router-link to="/users" class="nav-item" active-class="active">
-            <span class="nav-icon">
-              <EveryUser theme="outline" size="16" fill="currentColor" />
-            </span>
-            <span class="nav-text">用户管理</span>
-          </router-link>
-          <router-link to="/roles" class="nav-item" active-class="active">
-            <span class="nav-icon">
-              <Peoples theme="outline" size="16" fill="currentColor" />
-            </span>
-            <span class="nav-text">角色管理</span>
-          </router-link>
-          <router-link to="/permissions" class="nav-item" active-class="active">
-            <span class="nav-icon">
-              <Lock theme="outline" size="16" fill="currentColor" />
-            </span>
-            <span class="nav-text">权限管理</span>
-          </router-link>
-          <router-link to="/chat" class="nav-item" active-class="active">
-            <span class="nav-icon">
-              <MessageOne theme="outline" size="16" fill="currentColor" />
-            </span>
-            <span class="nav-text">AI对话</span>
-          </router-link>
-          <router-link to="/knowledge-base" class="nav-item" active-class="active">
-            <span class="nav-icon">
-              <BookOne theme="outline" size="16" fill="currentColor" />
-            </span>
-            <span class="nav-text">知识库</span>
-          </router-link>
-        </nav>
-        <div class="user-actions">
-          <span class="user-email">{{ userStore.userInfo?.email }}</span>
-          <button class="logout-btn" @click="logout">退出</button>
+  <div class="main-layout" :class="{ 'layout-chat': route.name === 'Chat' }">
+    <!-- 聊天页：仅渲染子路由，由 Chat.vue 自管左右分栏 -->
+    <template v-if="route.name === 'Chat'">
+      <main class="content content-chat-only">
+        <div class="chat-route-shell">
+          <router-view v-slot="{ Component }">
+            <transition name="fade-slide" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
         </div>
-      </div>
-      <div class="breadcrumb">
-        <router-link to="/">首页</router-link>
-        <span v-if="$route.name !== 'Dashboard'"> / {{ $route.meta.title }}</span>
-      </div>
-    </header>
+      </main>
+    </template>
 
-    <main class="content">
-      <div class="page-content">
-        <router-view v-slot="{ Component }">
-          <transition name="fade-slide" mode="out-in">
-            <component :is="Component" />
-          </transition>
-        </router-view>
-      </div>
-    </main>
+    <template v-else>
+      <header class="top-nav">
+        <div class="top-nav-main">
+          <router-link to="/chat" class="logo" title="AI 对话">AGS</router-link>
+          <UserExtensionMenu :show-chat-link="true" placement="bottom" />
+        </div>
+        <div class="breadcrumb">
+          <router-link to="/chat">AI 对话</router-link>
+          <span class="sep">/</span>
+          <span class="crumb-current">{{ route.meta.title }}</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <div class="page-content">
+          <router-view v-slot="{ Component }">
+            <transition name="fade-slide" mode="out-in">
+              <component :is="Component" />
+            </transition>
+          </router-view>
+        </div>
+      </main>
+    </template>
   </div>
 </template>
 
 <script setup>
-import { Home, EveryUser, Peoples, Lock, MessageOne, BookOne } from '@icon-park/vue-next'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '../stores/user'
-import { authApi } from '../api/auth'
+import { useRoute } from 'vue-router'
+import UserExtensionMenu from '../components/UserExtensionMenu.vue'
 
-const router = useRouter()
-const userStore = useUserStore()
-
-// 退出登录
-const logout = async () => {
-  try {
-    await authApi.logout()
-  } catch (error) {
-    console.error('登出失败:', error)
-  } finally {
-    userStore.logout()
-    router.push('/login')
-  }
-}
+const route = useRoute()
 </script>
 
 <style scoped>
 .main-layout {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: #f5f0e6;
   color: #3d3d3d;
+}
+
+.main-layout.layout-chat {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow: hidden;
 }
 
 .top-nav {
@@ -111,50 +81,26 @@ const logout = async () => {
   gap: 20px;
 }
 
+.top-nav-main :deep(.user-menu-wrap) {
+  width: auto;
+}
+
+.top-nav-main :deep(.user-trigger) {
+  width: auto;
+  border-radius: 999px;
+}
+
 .logo {
   font-size: 22px;
   font-weight: 700;
   color: #8b7355;
   margin: 0;
-}
-
-.feature-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex: 1;
-  flex-wrap: wrap;
-}
-
-.nav-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  color: #6b6b6b;
   text-decoration: none;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  transition: all 0.2s;
+  letter-spacing: 0.02em;
 }
 
-.nav-item:hover {
-  background-color: #e5dcc8;
-  color: #3d3d3d;
-}
-
-.nav-item.active {
-  background-color: #d4a574;
-  color: #3d3d3d;
-  border-color: #c99564;
-}
-
-.nav-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+.logo:hover {
+  color: #6b553f;
 }
 
 .breadcrumb {
@@ -171,36 +117,46 @@ const logout = async () => {
   text-decoration: none;
 }
 
-.breadcrumb span {
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.sep {
+  color: #c7b9a6;
+}
+
+.crumb-current {
   color: #6b6b6b;
-}
-
-.user-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-email {
-  color: #6b6b6b;
-  font-size: 14px;
-}
-
-.logout-btn {
-  background-color: #d4a574;
-  border: 1px solid #c99564;
-  color: #3d3d3d;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
-.logout-btn:hover {
-  background-color: #c99564;
 }
 
 .content {
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-chat-only {
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-route-shell {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-route-shell > * {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-content {
@@ -210,7 +166,6 @@ const logout = async () => {
   padding: 28px 24px;
 }
 
-/* 页面切换动画 */
 .fade-slide-enter-active,
 .fade-slide-leave-active {
   transition: all 0.2s ease;
@@ -224,21 +179,6 @@ const logout = async () => {
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateY(-8px);
-}
-
-@media (max-width: 992px) {
-  .top-nav-main {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .feature-nav {
-    justify-content: flex-start;
-  }
-
-  .user-actions {
-    justify-content: flex-end;
-  }
 }
 
 @media (max-width: 640px) {

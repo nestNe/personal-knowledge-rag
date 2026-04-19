@@ -1,18 +1,36 @@
 import service from './axios'
 
-// AI对话相关接口
+const CHAT_TIMEOUT_MS = 120000
+
+// AI对话相关接口（与 ChatController 一致）
 export const chatApi = {
-  // 发送消息
+  /** POST /api/ai/chat — 基本聊天，无会话记忆 */
   sendMessage: (message) => {
     return service.post(`/ai/chat?message=${encodeURIComponent(message)}`, {}, {
-      timeout: 60000 // 1分钟超时
+      timeout: CHAT_TIMEOUT_MS
     })
   },
 
-  // 基于知识库发送消息
-  sendKbMessage: (message) => {
-    return service.post(`/ai/chat/kb?message=${encodeURIComponent(message)}`, {}, {
-      timeout: 60000 // 1分钟超时
-    })
+  /**
+   * POST /api/ai/chat/kb — 知识库 + 记忆；不传 sessionId 时服务端创建新会话
+   * @param {string} message
+   * @param {string} [sessionId]
+   */
+  sendKbMessage: (message, sessionId) => {
+    let url = `/ai/chat/kb?message=${encodeURIComponent(message)}`
+    if (sessionId) {
+      url += `&sessionId=${encodeURIComponent(sessionId)}`
+    }
+    return service.post(url, {}, { timeout: CHAT_TIMEOUT_MS })
+  },
+
+  /** GET /api/ai/sessions — 当前用户会话列表 */
+  getSessions: () => {
+    return service.get('/ai/sessions')
+  },
+
+  /** GET /api/ai/sessions/{sessionId}/messages — 会话详情与聊天记录 */
+  getSessionMessages: (sessionId) => {
+    return service.get(`/ai/sessions/${encodeURIComponent(sessionId)}/messages`)
   }
 }
