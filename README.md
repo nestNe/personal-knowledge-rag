@@ -16,10 +16,14 @@
 ```
 
 #### 页面效果
-<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/a073da08-e239-4226-9a08-1f4ed551c00c" />
-
-
-<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/a8c5246b-9a39-49c9-b793-0c8241dcdf2b" />
+首页：
+<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/5d0fe8fc-7d57-4a0b-89ad-c2de9382ac0b" />
+ 
+<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/6f3a3a15-2b08-40f0-b584-344fd2c0fa0d" />
+知识库：
+<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/d9ede300-4a16-46e7-b88a-27978b02faa8" />
+权限管理：
+<img width="2549" height="1473" alt="image" src="https://github.com/user-attachments/assets/2cde4e58-839e-4cdb-99f4-db6b58c42699" />
 
 
 #### 项目模块介绍
