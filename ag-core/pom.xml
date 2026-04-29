@@ -55,12 +55,6 @@
             <version>${mybatis-plus.version}</version> <!-- 建议版本与你的 mybatis-plus 核心版本保持一致 -->
         </dependency>
 
-        <!-- Redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
         <!-- 密码加密（核心模块可能需要处理密码） -->
         <dependency>
             <groupId>org.springframework.security</groupId>

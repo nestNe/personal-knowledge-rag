@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @TableName("spring_ai_chat_memory")
-public class ChatMemory {
+public class ChatMemoryEntity {
     private String conversationId;
     private String content;
     private String type;        // USER/ASSISTANT/SYSTEM/TOOL

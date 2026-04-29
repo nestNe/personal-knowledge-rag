@@ -1,6 +1,7 @@
 package com.seehold.controller;
 
 import com.seehold.dto.SessionDetailDTO;
+import com.seehold.entity.ChatMemoryEntity;
 import com.seehold.entity.ChatSession;
 import com.seehold.security.UserDetailsImpl;
 import com.seehold.service.ChatSessionService;
@@ -8,14 +9,12 @@ import lombok.AllArgsConstructor;
 import com.seehold.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -25,9 +24,10 @@ public class ChatController {
 
     private final ChatClient userManageClient;
 
-    private final ChatClient kbClient;
 
     private final ChatSessionService chatSessionService;
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @PostMapping("/chat")
     @PreAuthorize("hasAuthority('agent:chat')")
@@ -59,42 +59,8 @@ public class ChatController {
             @RequestParam(value = "sessionId", required = false) String sessionId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("Received message: {}", message);
-
-        Long userId = userDetails.getId();
-        String systemContext = "当前用户ID: " + userId;
-
-        // 1. 获取会话
-        ChatSession session = chatSessionService.getSession(userId, sessionId);
-
-        //新会话
-        if (session == null)
-            session = chatSessionService.createSession(userId);
-
-        // 3. 调用 AI（使用 Spring AI 的 Advisor 机制）
-        String content = "";
-        if (session.getSessionId() != null && session.getUserId().equals(userId))
-            content = chatCore(systemContext, message, session.getSessionId());
-
-        // 4. 更新会话统计
-        chatSessionService.updateSession(session.getSessionId());
-
-        // 5. 异步生成摘要（首条消息 + 每 3 条消息触发一次）
-        int nextCount = (session.getMessageCount() == null ? 0 : session.getMessageCount()) + 1;
-        if (nextCount == 1 || nextCount % 3 == 0)
-            chatSessionService.generateSummary(session.getSessionId(), content, message);
-
+        String content = chatSessionService.chatWithKb(userDetails.getId(), sessionId, message);
         return Result.success(content);
-    }
-
-    public String chatCore(String systemContext, String message, String sessionId) {
-        return kbClient.prompt()
-                .system(systemContext)
-                .user(message)
-                .advisors(a -> a
-                        .param(ChatMemory.CONVERSATION_ID, sessionId)
-                )
-                .call()
-                .content();
     }
 
 
@@ -126,7 +92,7 @@ public class ChatController {
         }
 
         // 查询详细聊天记录（从 Spring AI 表）
-        List<com.seehold.entity.ChatMemory> memories = chatSessionService.getSessionMessages(sessionId, userDetails.getId());
+        List<ChatMemoryEntity> memories = chatSessionService.getSessionMessages(sessionId, userDetails.getId());
 
         return Result.success(SessionDetailDTO.builder()
                 .chatSession(session)

@@ -3,7 +3,7 @@ package com.seehold.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.seehold.constant.PromptConstant;
-import com.seehold.entity.ChatMemory;
+import com.seehold.entity.ChatMemoryEntity;
 import com.seehold.entity.ChatSession;
 import com.seehold.mapper.ChatMemoryMapper;
 import com.seehold.mapper.ChatSessionMapper;
@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -38,6 +39,8 @@ public class ChatSessionServiceImpl implements ChatSessionService {
 
     private final ChatClient fastClient;
 
+    private final ChatClient kbClient;
+
     @Value("${spring.ai.openai.chat.options.model}")
     @Getter
     private String modelType;
@@ -45,6 +48,42 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     private final PromptTemplate summaryPrompt = new PromptTemplate(PromptConstant.SUMMARY_TEMPLATE_PROMPT);
 
     private final PromptTemplate titlePrompt = new PromptTemplate(PromptConstant.TITLE_TEMPLATE_PROMPT);
+
+    @Override
+    @Transactional
+    public String chatWithKb(Long userId, String sessionId, String message) {
+        // 1. 获取或创建会话
+        ChatSession session = getSession(userId, sessionId);
+        if (session == null) {
+            session = createSession(userId);
+        }
+
+        // 2. 鉴权：确认会话归属当前用户
+        if (!session.getUserId().equals(userId)) {
+            throw new AccessDeniedException("无权访问该会话");
+        }
+
+        // 3. AI 对话（核心逻辑内聚在 Service 中）
+        String systemContext = "当前用户ID: " + userId;
+        String sId = session.getSessionId();
+        String content = kbClient.prompt()
+                .system(systemContext)
+                .user(message)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sId))
+                .call()
+                .content();
+
+        // 4. 更新会话统计
+        updateSession(session.getSessionId());
+
+        // 5. 按策略触发异步摘要
+        int nextCount = (session.getMessageCount() == null ? 0 : session.getMessageCount()) + 1;
+        if (nextCount == 1 || nextCount % 3 == 0) {
+            generateSummary(session.getSessionId(), content, message);
+        }
+
+        return content;
+    }
 
     @Override
     public ChatSession getSession(Long userId, String requestedSessionId) {
@@ -99,13 +138,13 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     }
 
     @Override
-    public List<ChatMemory> getSessionMessages(String sessionId, Long userId) {
+    public List<ChatMemoryEntity> getSessionMessages(String sessionId, Long userId) {
         ChatSession session = chatSessionMapper.selectBySessionId(sessionId);
         if (session != null && session.getUserId().equals(userId)) {
-            List<ChatMemory> chatMemories = chatMemoryMapper.selectList(
-                    new LambdaQueryWrapper<ChatMemory>()
-                            .eq(ChatMemory::getConversationId, sessionId)
-                            .orderByAsc(ChatMemory::getTimestamp)
+            List<ChatMemoryEntity> chatMemories = chatMemoryMapper.selectList(
+                    new LambdaQueryWrapper<ChatMemoryEntity>()
+                            .eq(ChatMemoryEntity::getConversationId, sessionId)
+                            .orderByAsc(ChatMemoryEntity::getTimestamp)
             );
             return chatMemories != null ? chatMemories : List.of();
         }
@@ -139,7 +178,7 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     public void generateSummary(String sessionId, String content, String question) {
         try {
             // 获取最近 3 条消息生成摘要
-            List<ChatMemory> messages = getRecentMessages(sessionId);
+            List<ChatMemoryEntity> messages = getRecentMessages(sessionId);
 
             StringBuilder context = new StringBuilder();
 
@@ -150,7 +189,7 @@ public class ChatSessionServiceImpl implements ChatSessionService {
             } else {
                 // getRecentMessages 是倒序，这里翻转为正序，保证上下文可读
                 Collections.reverse(messages);
-                for (ChatMemory message : messages) {
+                for (ChatMemoryEntity message : messages) {
                     context.append(message.getType()).append(": ")
                             .append(message.getContent())
                             .append("\n");
@@ -186,10 +225,10 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         }
     }
 
-    private List<ChatMemory> getRecentMessages(String sessionId) {
-        List<ChatMemory> chatMemories = chatMemoryMapper.selectList(new LambdaQueryWrapper<ChatMemory>()
-                .eq(ChatMemory::getConversationId, sessionId)
-                .orderByDesc(ChatMemory::getTimestamp)
+    private List<ChatMemoryEntity> getRecentMessages(String sessionId) {
+        List<ChatMemoryEntity> chatMemories = chatMemoryMapper.selectList(new LambdaQueryWrapper<ChatMemoryEntity>()
+                .eq(ChatMemoryEntity::getConversationId, sessionId)
+                .orderByDesc(ChatMemoryEntity::getTimestamp)
                 .last("LIMIT " + 3));
         return chatMemories != null ? chatMemories : List.of();
     }
