@@ -38,3 +38,4 @@ build/
 /ag-admin/src/main/resources/application-local.yaml
 /commit-type.png
 /docs/list.txt
+/.workbuddy/

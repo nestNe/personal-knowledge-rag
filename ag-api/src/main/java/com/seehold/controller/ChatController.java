@@ -24,7 +24,6 @@ public class ChatController {
 
     private final ChatClient userManageClient;
 
-
     private final ChatSessionService chatSessionService;
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -60,6 +59,17 @@ public class ChatController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info("Received message: {}", message);
         String content = chatSessionService.chatWithKb(userDetails.getId(), sessionId, message);
+        return Result.success(content);
+    }
+
+
+    private final ChatClient codeClient;
+
+    @PostMapping("/chat/code")
+    @PreAuthorize("hasAnyAuthority('agent:chat')")
+    public Result<String> chatCode(@RequestParam("message") String message) {
+        log.info("用户问题 : {}", message);
+        String content = codeClient.prompt(message).call().content();
         return Result.success(content);
     }
 
