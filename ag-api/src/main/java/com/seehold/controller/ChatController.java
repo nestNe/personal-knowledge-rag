@@ -8,7 +8,6 @@ import com.seehold.service.ChatSessionService;
 import lombok.AllArgsConstructor;
 import com.seehold.result.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,34 +21,28 @@ import java.util.List;
 @RequestMapping("/api/ai")
 public class ChatController {
 
-    private final ChatClient userManageClient;
-
     private final ChatSessionService chatSessionService;
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    /**
+     * 统一聊天接口 — Manager 模型自动分析意图，
+     * 将任务分发给合适的 Worker（用户管理 / 知识库 / 代码执行）。
+     * 支持会话记忆，不传 sessionId 时自动创建新会话。
+     */
     @PostMapping("/chat")
     @PreAuthorize("hasAuthority('agent:chat')")
-    public Result<String> chat(@RequestParam("message") String message,
-                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("Received message : {}", message);
-        String prompt = "当前用户id:" + userDetails.getId() + ", " + message;
-        String res = userManageClient
-                .prompt(prompt)
-                .call()
-                .content();
-
-        return Result.success(res);
+    public Result<String> chat(
+            @RequestParam("message") String message,
+            @RequestParam(value = "sessionId", required = false) String sessionId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("Received message: {}", message);
+        String content = chatSessionService.chatWithAgent(userDetails.getId(), sessionId, message);
+        return Result.success(content);
     }
 
     /**
-     * 聊天接口
-     * 记忆功能、摘要功能、知识库功能
-     *
-     * @param message
-     * @param sessionId
-     * @param userDetails
-     * @return
+     * 知识库聊天接口（保留兼容，前端 KB 模式仍在使用）
      */
     @PostMapping("/chat/kb")
     @PreAuthorize("hasAuthority('agent:chat')")
@@ -61,18 +54,6 @@ public class ChatController {
         String content = chatSessionService.chatWithKb(userDetails.getId(), sessionId, message);
         return Result.success(content);
     }
-
-
-    private final ChatClient codeClient;
-
-    @PostMapping("/chat/code")
-    @PreAuthorize("hasAnyAuthority('agent:chat')")
-    public Result<String> chatCode(@RequestParam("message") String message) {
-        log.info("用户问题 : {}", message);
-        String content = codeClient.prompt(message).call().content();
-        return Result.success(content);
-    }
-
 
     /**
      * 获取当前用户的会话列表（用于左侧边栏）

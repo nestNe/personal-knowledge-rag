@@ -41,6 +41,8 @@ public class ChatSessionServiceImpl implements ChatSessionService {
 
     private final ChatClient kbClient;
 
+    private final ChatClient managerClient;
+
     @Value("${spring.ai.openai.chat.options.model}")
     @Getter
     private String modelType;
@@ -80,6 +82,41 @@ public class ChatSessionServiceImpl implements ChatSessionService {
         int nextCount = (session.getMessageCount() == null ? 0 : session.getMessageCount()) + 1;
         if (nextCount == 1 || nextCount % 3 == 0) {
             generateSummary(session.getSessionId(), content, message);
+        }
+
+        return content;
+    }
+
+    @Override
+    @Transactional
+    public String chatWithAgent(Long userId, String sessionId, String message) {
+        // 1. 获取或创建会话
+        ChatSession session = getSession(userId, sessionId);
+        if (session == null) {
+            session = createSession(userId);
+        }
+
+        // 2. 鉴权
+        if (!session.getUserId().equals(userId)) {
+            throw new AccessDeniedException("无权访问该会话");
+        }
+
+        // 3. 通过 Manager Client 进行对话（Manager 自主分发给 Worker）
+        String sId = session.getSessionId();
+        String content = managerClient.prompt()
+                .system("当前用户ID: " + userId)
+                .user(message)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sId))
+                .call()
+                .content();
+
+        // 4. 更新会话统计
+        updateSession(sId);
+
+        // 5. 按策略触发异步摘要
+        int nextCount = (session.getMessageCount() == null ? 0 : session.getMessageCount()) + 1;
+        if (nextCount == 1 || nextCount % 3 == 0) {
+            generateSummary(sId, content, message);
         }
 
         return content;

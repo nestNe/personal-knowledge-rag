@@ -16,6 +16,11 @@ public interface ChatSessionService {
      */
     String chatWithKb(Long userId, String sessionId, String message);
 
+    /**
+     * 通过 Manager Client 执行对话 — Manager 分析意图后自动分发给合适的 Worker。
+     */
+    String chatWithAgent(Long userId, String sessionId, String message);
+
 
     /**
      * 获取或创建会话（核心方法）
