@@ -13,29 +13,24 @@
           </div>
 
           <div class="rail-sessions">
-            <template v-if="kbMode">
-              <button type="button" class="new-session-btn" @click="startNewSession">
-                + 新建会话
+            <button type="button" class="new-session-btn" @click="startNewSession">
+              + 新建会话
+            </button>
+            <div v-if="!loadingSessions" class="session-list">
+              <button
+                v-for="s in sessions"
+                :key="s.sessionId"
+                type="button"
+                class="session-item"
+                :class="{ active: currentSessionId === s.sessionId && !isDraftSession }"
+                @click="selectSession(s.sessionId)"
+              >
+                <span class="session-title">{{ s.title || '新会话' }}</span>
+                <span class="session-meta">{{ formatSessionTime(s.lastMessageTime || s.updatedAt) }}</span>
               </button>
-              <div v-if="!loadingSessions" class="session-list">
-                <button
-                  v-for="s in sessions"
-                  :key="s.sessionId"
-                  type="button"
-                  class="session-item"
-                  :class="{ active: currentSessionId === s.sessionId && !isDraftSession }"
-                  @click="selectSession(s.sessionId)"
-                >
-                  <span class="session-title">{{ s.title || '新会话' }}</span>
-                  <span class="session-meta">{{ formatSessionTime(s.lastMessageTime || s.updatedAt) }}</span>
-                </button>
-                <p v-if="sessions.length === 0" class="session-empty">暂无历史会话</p>
-              </div>
-              <div v-else class="session-loading">加载中…</div>
-            </template>
-            <p v-else class="rail-mode-hint">
-              当前为普通对话，不产生会话记录。切换为「知识库检索模型」可在此管理会话与记忆。
-            </p>
+              <p v-if="sessions.length === 0" class="session-empty">暂无历史会话</p>
+            </div>
+            <div v-else class="session-loading">加载中…</div>
           </div>
 
           <div class="rail-user">
@@ -63,19 +58,7 @@
           <div class="toolbar-title-block">
             <span class="toolbar-session-title" :title="chatToolbarTitle">{{ chatToolbarTitle }}</span>
           </div>
-          <div class="toolbar-mode-wrap">
-            <label class="toolbar-mode-label" for="chat-model">回答模式</label>
-            <div class="mode-select-wrap">
-              <select id="chat-model" v-model="selectedMode" class="mode-select-pill">
-                <option value="kb">知识库检索</option>
-                <option value="normal">普通聊天</option>
-              </select>
-            </div>
-          </div>
         </div>
-        <p v-if="!kbMode" class="toolbar-subhint">
-          普通对话不保存会话记录；切换为「知识库检索」可使用左侧会话与记忆。
-        </p>
       </header>
 
       <div class="chat-messages" ref="messagesContainer">
@@ -143,7 +126,7 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, watch } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import { chatApi } from '../api/chat'
 import { marked } from 'marked'
 import UserExtensionMenu from '../components/UserExtensionMenu.vue'
@@ -152,9 +135,6 @@ import { ArrowUp, MenuFold, MenuUnfold } from '@icon-park/vue-next'
 const WELCOME_HTML = marked.parse(
   '你好！我是阿古，有什么我可以帮助你的吗？'
 )
-
-const selectedMode = ref('kb')
-const kbMode = computed(() => selectedMode.value === 'kb')
 
 const sessions = ref([])
 const loadingSessions = ref(false)
@@ -180,9 +160,8 @@ const messagesContainer = ref(null)
 
 const displayMessages = computed(() => messages.value)
 
-/** 顶部标题：当前会话名 / 新对话 / 普通对话 */
+/** 顶部标题：当前会话名 / 新对话 */
 const chatToolbarTitle = computed(() => {
-  if (!kbMode.value) return '普通对话'
   if (isDraftSession.value && !currentSessionId.value) return '新对话'
   const s = sessions.value.find((x) => x.sessionId === currentSessionId.value)
   const t = s?.title?.trim()
@@ -302,43 +281,8 @@ const sendMessage = async () => {
   inputMessage.value = ''
   loading.value = true
 
-  if (selectedMode.value === 'normal') {
-    messages.value.push({
-      role: 'user',
-      content,
-      time: formatTime(new Date())
-    })
-    await nextTick()
-    scrollToBottom()
-    try {
-      const response = await chatApi.sendMessage(content)
-      const aiContent =
-        response?.code === 200 && response.data != null
-          ? response.data
-          : '抱歉，获取AI回复失败'
-      const htmlContent = marked.parse(typeof aiContent === 'string' ? aiContent : String(aiContent))
-      messages.value.push({
-        role: 'ai',
-        content: htmlContent,
-        time: formatTime(new Date())
-      })
-    } catch (error) {
-      console.error('发送消息失败:', error)
-      messages.value.push({
-        role: 'ai',
-        content: marked.parse('抱歉，发送消息失败，请稍后重试'),
-        time: formatTime(new Date())
-      })
-    } finally {
-      loading.value = false
-      await nextTick()
-      scrollToBottom()
-    }
-    return
-  }
-
-  // 知识库模式
   const previousIds = new Set(sessions.value.map((s) => s.sessionId))
+
   messages.value.push({
     role: 'user',
     content,
@@ -348,15 +292,20 @@ const sendMessage = async () => {
   scrollToBottom()
 
   try {
-    const response = await chatApi.sendKbMessage(
+    const response = await chatApi.sendMessage(
       content,
       isDraftSession.value ? undefined : currentSessionId.value || undefined
     )
-    const aiText =
+    const aiContent =
       response?.code === 200 && response.data != null
         ? response.data
         : '抱歉，获取AI回复失败'
-    const htmlContent = marked.parse(typeof aiText === 'string' ? aiText : String(aiText))
+    const htmlContent = marked.parse(typeof aiContent === 'string' ? aiContent : String(aiContent))
+    messages.value.push({
+      role: 'ai',
+      content: htmlContent,
+      time: formatTime(new Date())
+    })
 
     if (isDraftSession.value) {
       await fetchSessions()
@@ -365,19 +314,8 @@ const sendMessage = async () => {
         currentSessionId.value = session.sessionId
         isDraftSession.value = false
         await loadSessionMessages(session.sessionId)
-        return
       }
-      messages.value.push({
-        role: 'ai',
-        content: htmlContent,
-        time: formatTime(new Date())
-      })
     } else {
-      messages.value.push({
-        role: 'ai',
-        content: htmlContent,
-        time: formatTime(new Date())
-      })
       await fetchSessions()
     }
   } catch (error) {
@@ -405,11 +343,6 @@ onMounted(() => {
   scrollToBottom()
 })
 
-watch(kbMode, (kb) => {
-  if (kb) {
-    fetchSessions()
-  }
-})
 </script>
 
 <style scoped>
