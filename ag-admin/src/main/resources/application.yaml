@@ -41,7 +41,7 @@ mybatis-plus:
 # 日志配置
 logging:
   level:
-    com.seehold.mapper: debug
+    com.seehold.mapper: INFO #debug
 #    org.springframework.ai.chat.memory: DEBUG
 #    org.springframework.jdbc: DEBUG
 

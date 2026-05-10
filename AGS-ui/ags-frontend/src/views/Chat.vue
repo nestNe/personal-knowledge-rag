@@ -366,6 +366,8 @@ onMounted(() => {
 }
 
 .chat-left-rail {
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
   width: clamp(248px, 26vw, 300px);
   min-width: 0;
@@ -389,10 +391,10 @@ onMounted(() => {
 .rail-inner {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   width: clamp(248px, 26vw, 300px);
   max-width: 300px;
-  min-height: 100%;
-  height: 100%;
   box-sizing: border-box;
 }
 
